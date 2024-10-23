@@ -1,0 +1,46 @@
+Developing a software that detects security issues from a code or just security issue
+
+Tools we will use    
+
+1.QT(GUI interface)
+2. Regex tool (to pattern match or detect), 
+3.docker environment (to create isolated environment)   
+4. Openssl(to encrypt)   
+5. Innosetup to package the software data in 1 file
+
+
+Our software can do both static and dynamic detection analysis  
+1. static - using regex for pattern matching with locally saved malicious database 
+2. Dynamic - by using docker creating an isolated environment run user's code for security and also to see how the code will react to sensitive data. 
+
+
+1. QT for GUI (Graphical User interface)
+
+2.  Regex tool (regular expression) - Regex pattern matching is a tool to find security issues by matching specific patterns and can be used to compare user code against locally saved data. And regex use defined rules
+
+
+Pattern Match Local Files: Use regex to identify malicious code patterns in user-generated code
+To find simple SQL injection patterns like --, you could use the following regex pattern:
+std::regex pattern(R"(--\s*)"); // Matches SQL comments
+
+Pattern Match Sensitive Data: Implement regex to detect sensitive data formats (e.g., passwords, SSNs) in user inputs or files.
+
+e.g  
+     (?=.*[A-Z]): At least one uppercase letter.
+      (?=.* [a-z]): At least one lowercase letter.
+(?=.*\d): At least one digit.
+(?=.*[\W_]): At least one special character.
+ {8,}: At least 8 characters long.
+
+Encrypt Detected Data: After identifying sensitive data, use an encryption tool to securely encrypt and store this information.
+
+2. Docker environment -  
+What is Docker?
+Docker is an open-source tool that helps us create a back-end or hidden environment for running applications in isolated containers.
+Purpose in Our Software
+In our software, Docker allows us to input user code and use fake sensitive data to monitor how the code reacts without exposing the host system to potential risks.
+
+
+3.OpenSSL - It  is an open-source library used in C++ for implementing secure communications and data encryption. It is commonly used to protect sensitive data and ensure secure connections in applications. In our software, we use OpenSSL to encrypt user data or analyze it when saving.
+
+4.Inno Setup is a free installer creation tool for Windows applications. It allows developers to package their software into a user-friendly installation file,
