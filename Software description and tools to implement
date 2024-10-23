@@ -44,3 +44,25 @@ In our software, Docker allows us to input user code and use fake sensitive data
 3.OpenSSL - It  is an open-source library used in C++ for implementing secure communications and data encryption. It is commonly used to protect sensitive data and ensure secure connections in applications. In our software, we use OpenSSL to encrypt user data or analyze it when saving.
 
 4.Inno Setup is a free installer creation tool for Windows applications. It allows developers to package their software into a user-friendly installation file,
+
+
+
+Next plan
+1. TO develop the code and implement, qt Gui code and regex
+2. To improve detection, regex and docker are not enough, 
+         so to use algorithm like STL that has searching and sorting, to filter
+3. Documentation
+4. Testing 
+5. Deployment
+
+
+challenges 
+1. Integrating 
+2. reducing False positive
+3. FInishing code, integration, testing, documentation and deployment on time
+
+
+
+
+
+
