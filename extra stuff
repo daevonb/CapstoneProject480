@@ -1,0 +1,18 @@
+
+Focusing on specific security issues can make the detection process more manageable and effective. Here are some common security issues that could be easier to detect and may be suitable for your tool:
+
+Buffer Overflows: Detect the use of unsafe functions like strcpy, strcat, or sprintf, which can lead to buffer overflow vulnerabilities.
+
+SQL Injection: Identify any direct use of SQL queries constructed from user input without proper sanitization or parameterization.
+
+Command Injection: Look for functions that execute shell commands, such as system() or exec(), where user input is passed directly without validation.
+
+Use of Deprecated APIs: Search for functions that are known to be insecure or deprecated, like gethostbyname() instead of safer alternatives.
+
+Insecure File Handling: Detect usage patterns that may lead to path traversal vulnerabilities, such as unsanitized file paths or using functions like fopen() with user input.
+
+Insecure Data Storage: Look for hardcoded credentials or sensitive data that are stored in plain text.
+
+Insufficient Input Validation: Identify places where user input is taken without proper validation checks (e.g., missing bounds checking, regex validation).
+
+Weak Cryptographic Practices: Check for the use of outdated or weak cryptographic algorithms and improper handling of keys.
