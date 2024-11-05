@@ -1,0 +1,158 @@
+The article I used to find the keywords of buffer overflow
+      https://snyk.io/blog/buffer-overflow-attacks-in-c/
+
+
+
+
+
+
+I updated this function so that it detect buffer overflow, replace in your code to run it
+
+void StaticCodeAnalyzer::analyzeCode()
+{
+    if (currentFileContent.isEmpty()) {
+        QMessageBox::warning(this, "Error", "No file loaded");
+        return;
+    }
+
+    // Unsafe patterns
+    QRegularExpression unsafePatterns[] = {
+        QRegularExpression("\\bstrcpy\\s*\\("),
+        QRegularExpression("\\bstrcat\\s*\\("),
+        QRegularExpression("\\bstrcmp\\s*\\("),
+        QRegularExpression("\\bstrncat\\s*\\(\\s*[^,]*,[^,]*\\s*,\\s*[^,]*\\s*\\)"), // unsafe usage
+        QRegularExpression("\\bscanf\\s*\\("),
+        QRegularExpression("\\bfscanf\\s*\\("),
+        QRegularExpression("\\bsscanf\\s*\\("),
+        QRegularExpression("\\bgets\\s*\\("),
+        QRegularExpression("char\\s*\\*"),
+        QRegularExpression("\\bchar\\s+\\w+\\s*\\[\\d+\\]"),
+        QRegularExpression("\\breinterpret_cast\\s*\\("),
+        QRegularExpression("\\bstrtok\\s*\\("),
+        QRegularExpression("\\bsprintf\\s*\\("),
+        QRegularExpression("\\bchar\\s*\\*"),
+        QRegularExpression("\\bint\\s+\\w+\\s*\\[15\\]"),
+        QRegularExpression("std::cin"),
+        QRegularExpression("<cstdio>"),
+        QRegularExpression("<cstring>")
+    };
+
+    QStringList foundPatterns;
+
+    // Check for unsafe patterns
+    for (const auto& pattern : unsafePatterns) {
+        if (currentFileContent.contains(pattern)) {
+            foundPatterns.append(pattern.pattern());
+        }
+    }
+
+    // Display results
+    if (!foundPatterns.isEmpty()) {
+        QString result = "Unsafe Patterns Found:\n" + foundPatterns.join("\n");
+        ui->labelResult->setText(result);
+    } else {
+        ui->labelResult->setText("No unsafe patterns found.");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+unsafe words that cause buffer overflow 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////// 
+
+Not Safe APIs 
+
+C-style String Functions: 
+
+strcpy 
+
+strcat 
+
+strcmp 
+
+strncat (if improperly used with incorrect size) 
+
+C-style Input Functions: 
+
+scanf 
+
+fscanf 
+
+sscanf 
+
+gets (deprecated but commonly used) 
+
+Unsafe Memory Operations: 
+
+Raw pointers (e.g., char*) 
+
+Fixed-size arrays (e.g., char input[8]) 
+
+reinterpret_cast (can lead to unsafe conversions) 
+
+Legacy Functions: 
+
+gets 
+
+strtok 
+
+sprintf (can overflow if not properly handled) 
+
+Keywords to Avoid 
+
+char* 
+
+int array[15] 
+
+scanf 
+
+fscanf 
+
+sscanf 
+
+strcpy 
+
+strcat 
+
+std::cin 
+
+<cstdio> 
+
+<cstring> 
+
+strncat (if used incorrectly) 
+
+reinterpret_cast (potentially unsafe conversions) 
+
+sprintf (risk of overflow) 
+
+ 
+
+Not Safe APIs 
+
+C-style String Functions: 
+
+strncat (if improperly used with incorrect size) 
+
+C-style Input Functions: 
+
+gets (deprecated but commonly used) 
+
+Unsafe Memory Operations: 
+
+reinterpret_cast (can lead to unsafe conversions) 
+
+Legacy Functions: 
+
+sprintf (can overflow if not properly handled) 
