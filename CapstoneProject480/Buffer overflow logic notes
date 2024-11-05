@@ -1,12 +1,10 @@
-The article I used to find the keywords of buffer overflow
+---->>>>The article I used to find the keywords of buffer overflow
       https://snyk.io/blog/buffer-overflow-attacks-in-c/
 
 
 
 
-
-
-I updated this function so that it detect buffer overflow, replace in your code to run it
+---->>>I updated this function so that it detect buffer overflow, replace in your code to run it
 
 void StaticCodeAnalyzer::analyzeCode()
 {
@@ -67,7 +65,7 @@ void StaticCodeAnalyzer::analyzeCode()
 
 
 
-unsafe words that cause buffer overflow 
+---->>>unsafe words that cause buffer overflow 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////// 
 
@@ -156,3 +154,24 @@ reinterpret_cast (can lead to unsafe conversions)
 Legacy Functions: 
 
 sprintf (can overflow if not properly handled) 
+
+
+
+
+----->>> A buffer overflow occurs when a program writes more data to a buffer than it can hold, causing adjacent memory to be overwritten. This can lead to crashes, unexpected behavior, or allow attackers to execute malicious code.
+
+////how buffer overflow occurs
+
+how an attacker could breach a student’s code using a buffer overflow:
+
+Finding a Vulnerable Program: The attacker looks for a program (like the student’s code) that doesn’t properly check how much data it receives. For example, if the program accepts user input without limits, it might be vulnerable.
+
+Sending Overlarge Input: The attacker sends a carefully crafted input that exceeds the buffer’s size. For instance, if the program allows a user to enter their name into a fixed-size array but doesn’t check the length, the attacker might input a name that’s much longer than expected.
+
+Overwriting Memory: As this long input is processed, it spills over into adjacent memory locations. This can overwrite important data, like the program's return address (where the program should go next after executing a function).
+
+Injecting Malicious Code: The attacker can include malicious code in the input. When the buffer overflows, the attacker’s code can be placed in memory where the program will execute it.
+
+Taking Control: When the program tries to return from the function, it looks at the overwritten return address and instead goes to the location where the attacker’s code is stored, running that code instead of what was intended.
+
+Performing Malicious Actions: Now, the attacker can execute whatever commands they designed in their malicious code, potentially stealing data, corrupting files, or taking control of the system.
