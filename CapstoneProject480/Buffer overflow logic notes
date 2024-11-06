@@ -13,47 +13,79 @@ void StaticCodeAnalyzer::analyzeCode()
         return;
     }
 
-    // Unsafe patterns
+    // Unsafe patterns related to functions prone to buffer overflows
     QRegularExpression unsafePatterns[] = {
-        QRegularExpression("\\bstrcpy\\s*\\("),
-        QRegularExpression("\\bstrcat\\s*\\("),
-        QRegularExpression("\\bstrcmp\\s*\\("),
+        QRegularExpression("\\bstrcpy\\s*\\("),   // Match strcpy function
+        QRegularExpression("\\bstrcat\\s*\\("),   // Match strcat function
+        QRegularExpression("\\bstrcmp\\s*\\("),   // Match strcmp function
         QRegularExpression("\\bstrncat\\s*\\(\\s*[^,]*,[^,]*\\s*,\\s*[^,]*\\s*\\)"), // unsafe usage
-        QRegularExpression("\\bscanf\\s*\\("),
-        QRegularExpression("\\bfscanf\\s*\\("),
-        QRegularExpression("\\bsscanf\\s*\\("),
-        QRegularExpression("\\bgets\\s*\\("),
-        QRegularExpression("char\\s*\\*"),
-        QRegularExpression("\\bchar\\s+\\w+\\s*\\[\\d+\\]"),
-        QRegularExpression("\\breinterpret_cast\\s*\\("),
-        QRegularExpression("\\bstrtok\\s*\\("),
-        QRegularExpression("\\bsprintf\\s*\\("),
-        QRegularExpression("\\bchar\\s*\\*"),
-        QRegularExpression("\\bint\\s+\\w+\\s*\\[15\\]"),
-        QRegularExpression("std::cin"),
-        QRegularExpression("<cstdio>"),
-        QRegularExpression("<cstring>")
+        QRegularExpression("\\bscanf\\s*\\("),    // Match scanf function
+        QRegularExpression("\\bfscanf\\s*\\("),   // Match fscanf function
+        QRegularExpression("\\bsscanf\\s*\\("),   // Match sscanf function
+        QRegularExpression("\\bgets\\s*\\("),     // Match gets function
+        QRegularExpression("char\\s*\\*"),        // Match char pointer
+        QRegularExpression("\\bchar\\s+\\w+\\s*\\[\\d+\\]"), // Match fixed size char arrays
+        QRegularExpression("\\breinterpret_cast\\s*\\("), // Match reinterpret_cast
+        QRegularExpression("\\bstrtok\\s*\\("),   // Match strtok function
+        QRegularExpression("\\bsprintf\\s*\\("),  // Match sprintf function
+        QRegularExpression("std::cin")            // Match std::cin
     };
 
     QStringList foundPatterns;
+    QStringList possibleOverflows;
 
-    // Check for unsafe patterns
+    // Check for unsafe patterns in the code
     for (const auto& pattern : unsafePatterns) {
-        if (currentFileContent.contains(pattern)) {
-            foundPatterns.append(pattern.pattern());
+        QRegularExpressionMatchIterator matchIter = pattern.globalMatch(currentFileContent);
+        
+        // For each match found, append the matched keyword from the code
+        while (matchIter.hasNext()) {
+            QRegularExpressionMatch match = matchIter.next();
+            QString matchedText = match.captured(0); // Capture the whole match
+            
+            // Append the matched unsafe keyword to the found patterns list
+            foundPatterns.append(matchedText);
+        }
+
+        // Additional checks for unsafe buffer-overflow risks like `strcpy` and `scanf`
+        if (pattern.pattern() == "\\bstrcpy\\s*\\(") {
+            QRegularExpression bufferSizePattern("\\bstrcpy\\s*\\(([^,]+),\\s*([^)]+)\\)");
+            QRegularExpressionMatchIterator matchIter = bufferSizePattern.globalMatch(currentFileContent);
+            while (matchIter.hasNext()) {
+                QRegularExpressionMatch match = matchIter.next();
+                QString destBuffer = match.captured(1); // Destination buffer
+                QString srcString = match.captured(2); // Source string
+
+                // Here you can add logic to compare buffer sizes, or look for hardcoded values or warnings
+                if (destBuffer.length() > 10) { // Example check: if buffer length is too small for the string
+                    possibleOverflows.append("Potential buffer overflow with strcpy: " + destBuffer);
+                }
+            }
+        }
+
+        if (pattern.pattern() == "\\bscanf\\s*\\(") {
+            QRegularExpression scanfPattern("\\bscanf\\s*\\(\\s*\"%[a-zA-Z0-9%]+\"\\s*,\\s*[^)]+\\)");
+            QRegularExpressionMatchIterator scanfIter = scanfPattern.globalMatch(currentFileContent);
+            while (scanfIter.hasNext()) {
+                QRegularExpressionMatch match = scanfIter.next();
+                QString formatString = match.captured(1); // Format string
+                // Check for format specifiers that can lead to buffer overflows
+                if (formatString.contains("%s") && !formatString.contains("%[0-9]")) {
+                    possibleOverflows.append("Potential buffer overflow risk with scanf: " + match.captured(0));
+                }
+            }
         }
     }
 
     // Display results
-    if (!foundPatterns.isEmpty()) {
+    if (!foundPatterns.isEmpty() || !possibleOverflows.isEmpty()) {
         QString result = "Unsafe Patterns Found:\n" + foundPatterns.join("\n");
+        result += "\n\nPossible Buffer Overflow Risks:\n" + possibleOverflows.join("\n");
         ui->labelResult->setText(result);
     } else {
-        ui->labelResult->setText("No unsafe patterns found.");
+        ui->labelResult->setText("No unsafe patterns or buffer overflow risks found.");
     }
 }
-
-
 
 
 
